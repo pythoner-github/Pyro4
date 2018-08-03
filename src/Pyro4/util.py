@@ -597,6 +597,12 @@ class SerpentSerializer(SerializerBase):
     def loads(self, data):
         return self.recreate_classes(serpent.loads(data))
 
+    def recreate_classes(self, literal):
+        if isinstance(literal, dict) and "data" in literal and literal.get("encoding") == "base64":
+            return serpent.tobytes(literal)
+
+        return super().recreate_classes(literal)
+
     @classmethod
     def register_type_replacement(cls, object_type, replacement_function):
         def custom_serializer(object, serpent_serializer, outputstream, indentlevel):
